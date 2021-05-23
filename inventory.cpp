@@ -8,6 +8,7 @@ bool Inventory::mapHasItem(const SingleItemStorageType &map, ItemTypeStorage ite
 
 int Inventory::addItemToStorage(Inventory::SingleItemStorageType &itemsMap, ItemType type, int howMuchAdded)
 {
+    //добавляем нужное количество предметов в мапу
     auto key = static_cast<ItemTypeStorage>(type);
     if (mapHasItem(itemsMap, key)) {//такой элемент уже есть
         itemsMap[key] += howMuchAdded;
@@ -25,6 +26,9 @@ int Inventory::deleteItemFromStorage(Inventory::SingleItemStorageType &itemsMap,
         int &count = itemsMap[key];
         if (count - howMuchDeleted >= 0) {
             count -= howMuchDeleted;
+            if (howMuchDeleted == 1) {
+                emit itemEaten();//если минус один элемент, значит его съели
+            }
         } else {
             qDebug() << "Inventory::deleteItemFromStorage - deleting too much items from storage";
             count = 0;
@@ -38,6 +42,7 @@ int Inventory::deleteItemFromStorage(Inventory::SingleItemStorageType &itemsMap,
 
 void Inventory::moveItemsFromImpl(int fromRow, int fromColumn, int toRow, int toColumn)
 {
+    //переносим всё из from в to, в to всё ставим по нулям
     SingleItemStorageType &from = matrix[fromRow][fromColumn];
     SingleItemStorageType &to = matrix[toRow][toColumn];
 
@@ -73,7 +78,17 @@ Inventory::Inventory(int rows_, int columns_, QObject *parent)
     , columns(columns_)
     , matrix(rows_, QVector<SingleItemStorageType>(columns_))
 {
-    qDebug() << matrix;
+    //
+}
+
+//всё удаляем из матрицы
+void Inventory::clear()
+{
+    for (QVector<SingleItemStorageType> &row: matrix) {
+        for (SingleItemStorageType &cell: row) {
+            cell.clear();
+        }
+    }
 }
 
 int Inventory::getItemAmount(int row, int column, ItemType type)
@@ -116,7 +131,9 @@ void Inventory::deleteItem(int row, int column, ItemType type, int howMuchDelete
 
 void Inventory::moveItemsFrom(int fromRow, int fromColumn, int toRow, int toColumn)
 {
-    if (isValidPosition(fromRow, fromColumn) && isValidPosition(toRow, toColumn)) {
+    if (isValidPosition(fromRow, fromColumn)
+            && isValidPosition(toRow, toColumn)
+            && (fromRow != toRow || fromColumn != toColumn)) {
         moveItemsFromImpl(fromRow, fromColumn, toRow, toColumn);
     }
 }
