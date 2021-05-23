@@ -8,7 +8,7 @@ InventoryItemDelegate::InventoryItemDelegate(QObject *parent)
     //
 }
 
-QSize InventoryItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize InventoryItemDelegate::sizeHint(const QStyleOptionViewItem&, const QModelIndex&) const
 {
     return QPixmap(defaultPicPath).size();
 }
