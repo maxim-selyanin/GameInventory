@@ -3,5 +3,6 @@
     <file>images/defaultpic.jpg</file>
 	<file>images/bigapple.jpg</file>
 	<file>images/smallapple.jpg</file>
+	<file>sounds/applenibble.wav</file>
 </qresource>
 </RCC>
