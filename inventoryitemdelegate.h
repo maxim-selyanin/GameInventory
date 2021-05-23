@@ -3,6 +3,9 @@
 
 #include <QStyledItemDelegate>
 
+///
+/// \brief делегат, устанавливающий нужный размер клетки
+///
 class InventoryItemDelegate : public QStyledItemDelegate
 {
 public:
