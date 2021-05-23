@@ -13,6 +13,7 @@ DragAppleLabel::DragAppleLabel(QWidget *parent)
 
 void DragAppleLabel::mousePressEvent(QMouseEvent *event)
 {
+    //по левой кнопке мыши стартуем драг ивент
     if (event->button() == Qt::LeftButton) {
            QDrag *drag = new QDrag(this);
            QMimeData *mimeData = new QMimeData;
