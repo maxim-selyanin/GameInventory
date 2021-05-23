@@ -2,12 +2,7 @@
 
 void Item::setPicWay(ItemType t)
 {
-    switch (t) {
-    case ItemType::apple: {
-        picWay = smallApplePath;
-        return;
-    }
-    }
+    picWay = getPicPath(t);
 }
 
 Item::Item(ItemType t)
