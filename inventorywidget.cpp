@@ -7,7 +7,10 @@
 #include <QScrollBar>
 #include "inventoryitemdelegate.h"
 #include <QPainter>
+#include <QCloseEvent>
+#include <QDebug>
 
+//устанавливаем нужный размер для таблички с инвентарём
 QSize getQTableWidgetSize(QTableWidget *t) {
    int w = t->verticalHeader()->width() + 4;
    for (int i = 0; i < t->columnCount(); i++){
@@ -21,7 +24,6 @@ QSize getQTableWidgetSize(QTableWidget *t) {
 
    return QSize(w, h);
 }
-
 void redoGeometry(QWidget *w) {
    const bool vis = w->isVisible();
    const QPoint pos = w->pos();
@@ -34,11 +36,10 @@ void redoGeometry(QWidget *w) {
 }
 
 
-
-
-
+//создаём табличку с инвентарём
 AppleDropTableWidget *InventoryWidget::createTableWidget()
-{tableWidget = new AppleDropTableWidget(rows, columns, this);
+{
+    tableWidget = new AppleDropTableWidget(rows, columns, this);
 
     //ставим делегата
     tableWidget->setItemDelegate(new InventoryItemDelegate(tableWidget));
@@ -63,6 +64,7 @@ AppleDropTableWidget *InventoryWidget::createTableWidget()
     return tableWidget;
 }
 
+//создаём виджет с яблочком
 DragAppleLabel *InventoryWidget::createAppleWidget()
 {
     DragAppleLabel *imageLabel = new DragAppleLabel(this);
@@ -88,6 +90,7 @@ QPixmap InventoryWidget::getPixmap(const QPixmap &pixmap, int amount)
 
     QPoint textPoint(result.width() - textHorizontalOffset, result.height() - textVerticalOffset);
 
+    //рисуем нужно число на пиксмапе
     painter.drawText(textPoint, QString().setNum(amount));
 
     return result;
@@ -98,10 +101,9 @@ InventoryWidget::InventoryWidget(int rows_, int columns_, QWidget *parent)
     , rows(rows_)
     , columns(columns_)
 {
-//    this->setModal(true);//for qdialog only
-
     QGridLayout *layout = new QGridLayout(this);
 
+    //создаём три нужных виджета
     auto table = createTableWidget();
     auto apple = createAppleWidget();
     auto mainMenuButton = createMainMenuButton();
@@ -115,16 +117,19 @@ InventoryWidget::InventoryWidget(int rows_, int columns_, QWidget *parent)
 
 
 
+    //заливаем виджеты на сетчатый лейаут
     layout->addWidget(mainMenuButton, 0, 0, 1, 2);
     layout->addWidget(table, 1, 0);
     layout->addWidget(apple, 1, 1);
 
     this->setLayout(layout);
 
+    //коннектим сигналы-слоты
     connect(mainMenuButton, &QPushButton::pressed, this, &InventoryWidget::showMainMenu);
     connect(table, &AppleDropTableWidget::itemAddedOn, this, &InventoryWidget::itemAddedOn);
     connect(table, &AppleDropTableWidget::itemDeletedOn, this, &InventoryWidget::itemDeletedOn);
     connect(table, &AppleDropTableWidget::moveItemsFrom, this, &InventoryWidget::moveItemsFrom);
+    connect(this, &InventoryWidget::playSound, table, &AppleDropTableWidget::playSound);
 }
 
 InventoryWidget::~InventoryWidget()
@@ -134,6 +139,7 @@ InventoryWidget::~InventoryWidget()
 
 void InventoryWidget::changedAmountOn(int row, int column, const QPixmap &pic, int newAmount)
 {
+    //ставим нужную картинку
     QTableWidgetItem *myItem = tableWidget->item(row, column);
     if (newAmount > 0) {
         myItem->setData(Qt::DecorationRole, getPixmap(pic, newAmount));
