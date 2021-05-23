@@ -3,6 +3,9 @@
 
 #include <QWidget>
 
+///
+/// \brief виджет главного меню
+///
 class MainMenu : public QWidget
 {
     Q_OBJECT
@@ -11,10 +14,10 @@ public:
     MainMenu(QWidget *parent = nullptr);
     ~MainMenu() override;
 
-    virtual void closeEvent(QCloseEvent *event) override;
-
 signals:
+    //сигнал о начале новой игры
     void newGame();
-    void closed();
+    //сигнал о закрытии приложения
+    void exitSignal();
 };
 #endif // MAINMENU_H
