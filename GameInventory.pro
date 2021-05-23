@@ -4,6 +4,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 QT += multimedia
+QT += sql
 
 RESOURCES = resources.qrc
 
@@ -21,6 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     application.cpp \
     commondefinitions.cpp \
+    database.cpp \
     draglabel.cpp \
     droptablewidget.cpp \
     inventory.cpp \
@@ -34,6 +36,7 @@ SOURCES += \
 HEADERS += \
     application.h \
     commondefinitions.h \
+    database.h \
     draglabel.h \
     droptablewidget.h \
     inventory.h \
